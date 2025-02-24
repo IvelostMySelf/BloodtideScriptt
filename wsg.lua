@@ -261,7 +261,7 @@ local notificationsToggleText = Instance.new("TextLabel")
 notificationsToggleText.Parent = notificationsToggle
 notificationsToggleText.BackgroundTransparency = 1
 notificationsToggleText.Position = UDim2.new(0, 10, 0, 0)
-notificationsToggleText.Size = UDim2.new(0, 120, 1, 0)
+notificationsToggleText.Size = UDim2.new(0, 200, 1, 0)
 notificationsToggleText.Font = Enum.Font.SourceSansBold
 notificationsToggleText.Text = "GUI Notifications"
 notificationsToggleText.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -270,28 +270,84 @@ notificationsToggleText.TextXAlignment = Enum.TextXAlignment.Left
 
 local notificationsToggleButton = Instance.new("TextButton")
 notificationsToggleButton.Parent = notificationsToggle
-notificationsToggleButton.BackgroundColor3 = Color3.fromRGB(255, 70, 70)
-notificationsToggleButton.Position = UDim2.new(1, -50, 0.5, -10)
-notificationsToggleButton.Size = UDim2.new(0, 40, 0, 20)
-notificationsToggleButton.Text = "OFF"
-notificationsToggleButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+notificationsToggleButton.BackgroundColor3 = Color3.fromRGB(70, 255, 70)
+notificationsToggleButton.Position = UDim2.new(1, -60, 0.5, -10)
+notificationsToggleButton.Size = UDim2.new(0, 50, 0, 20)
 notificationsToggleButton.Font = Enum.Font.SourceSansBold
+notificationsToggleButton.Text = "ON"
+notificationsToggleButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 notificationsToggleButton.TextSize = 12
+notificationsToggleButton.AutoButtonColor = false
 
 local notificationsToggleButtonCorner = Instance.new("UICorner")
 notificationsToggleButtonCorner.Parent = notificationsToggleButton
 notificationsToggleButtonCorner.CornerRadius = UDim.new(0, 4)
 
-local notificationsToggled = false
+-- Notifications Toggle Button Click Handler
 notificationsToggleButton.MouseButton1Click:Connect(function()
-    notificationsToggled = not notificationsToggled
-    notificationsToggleButton.Text = notificationsToggled and "ON" or "OFF"
-    notificationsToggleButton.BackgroundColor3 = notificationsToggled and Color3.fromRGB(70, 255, 70) or Color3.fromRGB(255, 70, 70)
+    if notificationsToggleButton.Text == "OFF" then
+        notificationsToggleButton.Text = "ON"
+        notificationsToggleButton.BackgroundColor3 = Color3.fromRGB(70, 255, 70)
+    else
+        notificationsToggleButton.Text = "OFF"
+        notificationsToggleButton.BackgroundColor3 = Color3.fromRGB(255, 70, 70)
+    end
 end)
 
--- Başlangıçta açık olarak ayarla
-notificationsToggleButton.Text = "ON"
-notificationsToggleButton.BackgroundColor3 = Color3.fromRGB(70, 255, 70)
+-- Notification System
+local NotificationSystem = Instance.new("ScreenGui")
+NotificationSystem.Name = "NotificationSystem"
+NotificationSystem.Parent = game.CoreGui
+
+local function createNotification(text)
+    -- Notifications Toggle durumunu kontrol et
+    if notificationsToggleButton.Text ~= "ON" then return end
+
+    local Notification = Instance.new("Frame")
+    Notification.Name = "Notification"
+    Notification.Parent = NotificationSystem
+    Notification.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+    Notification.Position = UDim2.new(1, -310, 1, -70)
+    Notification.Size = UDim2.new(0, 300, 0, 60)
+    Notification.BackgroundTransparency = 0.1
+    Notification.ZIndex = 1000
+
+    local NotificationCorner = Instance.new("UICorner")
+    NotificationCorner.Parent = Notification
+    NotificationCorner.CornerRadius = UDim.new(0, 8)
+
+    local NotificationText = Instance.new("TextLabel")
+    NotificationText.Parent = Notification
+    NotificationText.BackgroundTransparency = 1
+    NotificationText.Position = UDim2.new(0, 10, 0, 0)
+    NotificationText.Size = UDim2.new(1, -20, 1, 0)
+    NotificationText.Font = Enum.Font.SourceSansBold
+    NotificationText.Text = text
+    NotificationText.TextColor3 = Color3.fromRGB(255, 255, 255)
+    NotificationText.TextSize = 16
+    NotificationText.TextWrapped = true
+    NotificationText.ZIndex = 1001
+
+    -- Animasyon
+    Notification.Position = UDim2.new(1, 0, 1, -70)
+    local tweenIn = game:GetService("TweenService"):Create(Notification, TweenInfo.new(0.5, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {
+        Position = UDim2.new(1, -310, 1, -70)
+    })
+    tweenIn:Play()
+
+    -- 3 saniye sonra kaybolma
+    coroutine.wrap(function()
+        wait(3)
+        
+        local tweenOut = game:GetService("TweenService"):Create(Notification, TweenInfo.new(0.5, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {
+            Position = UDim2.new(1, 0, 1, -70)
+        })
+        tweenOut:Play()
+        
+        tweenOut.Completed:Wait()
+        Notification:Destroy()
+    end)()
+end
 
 -- GUI Key Bind Button
 local keyBindFrame = Instance.new("Frame")
@@ -338,6 +394,11 @@ game:GetService("UserInputService").InputBegan:Connect(function(input)
     if input.KeyCode == selectedKey then
         guiVisible = not guiVisible
         MainFrame.Visible = guiVisible
+        
+        -- GUI kapandığında bildirim gönder
+        if not guiVisible then
+            createNotification("Gui Key Is \"" .. selectedKey.Name .. "\".")
+        end
     end
 end)
 
@@ -487,7 +548,41 @@ end)
 
 -- Close button functionality
 CloseButton.MouseButton1Click:Connect(function()
-    ScreenGui:Destroy()
+    -- GUI'yi kapat
+    MainFrame:Destroy()
+    -- Bildirim sistemini kaldır
+    if NotificationSystem then
+        NotificationSystem:Destroy()
+    end
+    -- Bağlantıları temizle
+    if rainbowConnection then
+        rainbowConnection:Disconnect()
+    end
+end)
+
+-- GUI Key Functionality
+local guiVisible = true
+local selectedKey = Enum.KeyCode.RightShift
+local isGuiDestroyed = false
+
+game:GetService("UserInputService").InputBegan:Connect(function(input)
+    if input.KeyCode == selectedKey then
+        -- GUI destroy edildiyse hiçbir şey yapma
+        if isGuiDestroyed then return end
+        
+        guiVisible = not guiVisible
+        MainFrame.Visible = guiVisible
+        
+        -- GUI kapandığında ve GUI destroy edilmediyse bildirim gönder
+        if not guiVisible and not isGuiDestroyed then
+            createNotification("Gui Key Is \"" .. selectedKey.Name .. "\".")
+        end
+    end
+end)
+
+-- Close button tıklandığında GUI'nin destroy edildiğini işaretle
+CloseButton.MouseButton1Click:Connect(function()
+    isGuiDestroyed = true
 end)
 
 -- Minimize button functionality
