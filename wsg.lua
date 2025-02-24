@@ -751,6 +751,44 @@ local function createDropdown(parent, text, position, options)
     return dropdown
 end
 
+-- Visuals Tab Elements
+local function createVisualsElements()
+    -- Box ESP Toggle
+    local boxEspToggle = createToggle(VisualsTab, "Box ESP", UDim2.new(0, 10, 0, 10))
+    boxEspToggle.Size = UDim2.new(1, -20, 0, 30)
+
+    -- Highlight Toggle
+    local highlightToggle = createToggle(VisualsTab, "Highlight", UDim2.new(0, 10, 0, 50))
+    highlightToggle.Size = UDim2.new(1, -20, 0, 30)
+
+    -- Skeleton ESP Toggle
+    local skeletonEspToggle = createToggle(VisualsTab, "Skeleton ESP", UDim2.new(0, 10, 0, 90))
+    skeletonEspToggle.Size = UDim2.new(1, -20, 0, 30)
+
+    -- Tracers Toggle
+    local tracersToggle = createToggle(VisualsTab, "Tracers", UDim2.new(0, 10, 0, 130))
+    tracersToggle.Size = UDim2.new(1, -20, 0, 30)
+
+    -- Name ESP Toggle
+    local nameEspToggle = createToggle(VisualsTab, "Name ESP", UDim2.new(0, 10, 0, 170))
+    nameEspToggle.Size = UDim2.new(1, -20, 0, 30)
+
+    -- Team Check Toggle
+    local teamCheckToggle = createToggle(VisualsTab, "Team Check", UDim2.new(0, 10, 0, 210))
+    teamCheckToggle.Size = UDim2.new(1, -20, 0, 30)
+
+    -- Team Color Toggle
+    local teamColorToggle = createToggle(VisualsTab, "Team Color", UDim2.new(0, 10, 0, 250))
+    teamColorToggle.Size = UDim2.new(1, -20, 0, 30)
+
+    -- Health ESP Toggle
+    local healthEspToggle = createToggle(VisualsTab, "Health ESP", UDim2.new(0, 10, 0, 290))
+    healthEspToggle.Size = UDim2.new(1, -20, 0, 30)
+end
+
+-- Create Visuals Elements
+createVisualsElements()
+
 -- Add elements to Aimbot tab
 local fovToggle = createToggle(AimbotTab, "FOV", UDim2.new(0, 20, 0, 20))
 local aimbotToggle = createToggle(AimbotTab, "Aimbot", UDim2.new(0, 20, 0, 70))
