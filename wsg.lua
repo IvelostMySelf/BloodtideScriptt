@@ -386,7 +386,7 @@ guiColorDropdownButton.Parent = guiColorDropdown
 guiColorDropdownButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
 guiColorDropdownButton.Position = UDim2.new(1, -70, 0.5, -10)
 guiColorDropdownButton.Size = UDim2.new(0, 60, 0, 20)
-guiColorDropdownButton.Text = "Aqua"
+guiColorDropdownButton.Text = "Dark"
 guiColorDropdownButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 guiColorDropdownButton.Font = Enum.Font.SourceSansBold
 guiColorDropdownButton.TextSize = 12
@@ -429,12 +429,12 @@ for i, option in ipairs(guiColorOptions) do
     optionButton.MouseButton1Click:Connect(function()
         guiColorDropdownButton.Text = option
         guiColorDropdownMenu.Visible = false
-        updateColors(option)  -- Renk güncelleme fonksiyonunu çağır
+        updateColors(option)
     end)
 end
 
--- Başlangıçta Aqua rengini ayarla
-updateColors("Aqua")
+-- Başlangıçta Dark rengini ayarla
+updateColors("Dark")
 
 guiColorDropdownButton.MouseButton1Click:Connect(function()
     guiColorDropdownMenu.Visible = not guiColorDropdownMenu.Visible
